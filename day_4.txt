@@ -1,0 +1,67 @@
+****************************Problem*********************************
+Given a positive integer, output its complement number. The complement strategy is to flip the bits of its binary representation.
+
+ 
+
+Example 1:
+
+Input: 5
+Output: 2
+Explanation: The binary representation of 5 is 101 (no leading zero bits), and its complement is 010. So you need to output 2.
+ 
+
+Example 2:
+
+Input: 1
+Output: 0
+Explanation: The binary representation of 1 is 1 (no leading zero bits), and its complement is 0. So you need to output 0.
+ 
+
+Note:
+
+The given integer is guaranteed to fit within the range of a 32-bit signed integer.
+You could assume no leading zero bit in the integer’s binary representation.
+
+
+****************************My Solution 0ms*************************
+class Solution {
+    public int findComplement(int num) {
+           if(num==0){
+               return 1;
+           }
+        //in a num n no. of bits = (logn base 2)+1
+        
+        int numberOfBitsinNum = (int)(Math.floor(Math.log(num)/Math.log(2))) + 1;
+        
+        //xor with 2^(no.ofbits)-1 Eg- n=5 num of bits = 3, xor with 7 i.e. 111 to no. 5 i.e. 101 ans = 010
+        //1<<numberOfBitsinNum == 2**numberOfBitsinNum
+        //1<<any number  = 2 multiplied that number times
+        
+        return ((1<<numberOfBitsinNum)-1)^num;
+    }
+}
+
+// another 0 ms
+class Solution {
+    public int findComplement(int num) {
+        int cp = num;
+        int sum = 0;
+        while(num > 0){
+            sum = (sum << 1) + 1;
+            num >>= 1;
+        }
+        return sum - cp;
+        
+    }
+}
+//intuitive 1ms solution
+class Solution {
+    public int bitwiseComplement(int N) {
+        char[] cc = Integer.toBinaryString(N).toCharArray();
+        for(int i=0;i<cc.length;i++) {
+            if(cc[i]=='0') cc[i]='1'; else cc[i] = '0';
+        }
+        //System.out.println(String.valueOf(cc));
+        return Integer.parseInt(String.valueOf(cc),2);
+    }
+}
