@@ -1,0 +1,164 @@
+******************************PROBLEM*******************************
+Given an array of size n, find the majority element. The majority element is the element that appears more than ⌊ n/2 ⌋ times.
+
+You may assume that the array is non-empty and the majority element always exist in the array.
+
+Example 1:
+
+Input: [3,2,3]
+Output: 3
+Example 2:
+
+Input: [2,2,1,1,1,2,2]
+Output: 2
+********************************MY SOLUTION 10MS********************
+class Solution {
+    public int majorityElement(int[] nums) {
+      if(nums.length==1 || nums.length==2){
+          return nums[0];
+      }  
+      Map<Integer,Integer> count = new HashMap<>();
+      int majority = (int) Math.floor(nums.length/2)+1;
+      for(int element : nums){
+          count.put(element, count.getOrDefault(element,0)+1);
+          if(count.get(element)>=majority){
+              return element;
+          }
+      }  
+      return -1;  
+    }
+}
+*******************************6MS SOLUTION*************************
+import java.util.*;
+class Solution {
+    public int majorityElement(int[] nums) {
+        List<Integer> sortedList = new ArrayList<>();
+        int result;
+        int length = nums.length;
+        
+        for(int num:nums)
+        {
+            sortedList.add(num);
+        }
+        
+        Collections.sort(sortedList);
+        
+        if(length%2 ==0)
+        {
+           result = sortedList.get((length/2)-1); 
+        }
+        else 
+        {
+            result = sortedList.get(length/2);
+        }
+        
+        return result;       
+    }
+}
+*******************0MS**********************************************
+class Solution {
+    public int majorityElement(int[] nums) {
+        
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        return majorityElement(nums, 0);
+    }
+    private int majorityElement(int[] nums, int start){
+        int count = 1;
+        int num = nums[start];
+        for(int i = start+1;i<nums.length;i++){
+            if(num == nums[i]) count++;
+            else count--;
+            if(count == 0) return majorityElement(nums,i+1);
+        }
+        return num;
+    }
+}
+
+
+
+**********************SOLUTIONS*************************************
+1. BRUTE FORCE
+class Solution {
+    public int majorityElement(int[] nums) {
+        int majorityCount = nums.length/2;
+
+        for (int num : nums) {
+            int count = 0;
+            for (int elem : nums) {
+                if (elem == num) {
+                    count += 1;
+                }
+            }
+
+            if (count > majorityCount) {
+                return num;
+            }
+
+        }
+
+        return -1;    
+    }
+}
+2. HASHMAP
+class Solution {
+    private Map<Integer, Integer> countNums(int[] nums) {
+        Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        for (int num : nums) {
+            if (!counts.containsKey(num)) {
+                counts.put(num, 1);
+            }
+            else {
+                counts.put(num, counts.get(num)+1);
+            }
+        }
+        return counts;
+    }
+
+    public int majorityElement(int[] nums) {
+        Map<Integer, Integer> counts = countNums(nums);
+
+        Map.Entry<Integer, Integer> majorityEntry = null;
+        for (Map.Entry<Integer, Integer> entry : counts.entrySet()) {
+            if (majorityEntry == null || entry.getValue() > majorityEntry.getValue()) {
+                majorityEntry = entry;
+            }
+        }
+
+        return majorityEntry.getKey();
+    }
+}
+3. SORTING
+class Solution {
+    public int majorityElement(int[] nums) {
+        Arrays.sort(nums);
+        return nums[nums.length/2];
+    }
+}
+4. Boyer-Moore Voting Algorithm - O(n) time      O(1) space
+Intuition
+
+If we had some way of counting instances of the majority element as +1 and instances of any other element as -1, summing them would make it obvious that the majority element is indeed the majority element.
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        int count = 0;
+        Integer candidate = null;
+
+        for (int num : nums) {
+            if (count == 0) {
+                candidate = num;
+            }
+            count += (num == candidate) ? 1 : -1;
+        }
+
+        return candidate;
+    }
+}
+ consider the following examples (pipes are inserted to separate runs of nonzero count).
+
+[7, 7, 5, 7, 5, 1 | 5, 7 | 5, 5, 7, 7 | 7, 7, 7, 7]
+
+Here, the 7 at index 0 is selected to be the first candidate for majority element. count will eventually reach 0 after index 5 is processed, so the 5 at index 6 will be the next candidate. In this case, 7 is the true majority element, so by disregarding this prefix, we are ignoring an equal number of majority and minority elements - therefore, 7 will still be the majority element in the suffix formed by throwing away the first prefix.
+
