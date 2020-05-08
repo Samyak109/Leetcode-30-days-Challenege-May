@@ -1,0 +1,144 @@
+***********************My Solution*********************************
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+   
+    int level=Integer.MIN_VALUE;
+    private int dfs(TreeNode root,int x,int depth){
+        if(root==null)
+            return 0;
+        if(root.val==x)
+            return depth;
+        level=dfs(root.left,x,depth+1);
+        if(level<=0){
+           level=dfs(root.right,x,depth+1);
+        }
+        return level;
+    }
+    private TreeNode getParent(TreeNode root,int value){
+        if(root==null)
+            return null;
+         if(root.left!=null && root.left.val==value || root.right!=null && root.right.val==value){
+             return root;
+         }   
+        else{
+            
+            TreeNode parent=getParent(root.left,value);
+            if(parent==null){
+                parent=getParent(root.right,value);
+            }
+          return parent;
+        }
+        
+    }
+    public boolean isCousins(TreeNode root, int x, int y) {
+          int depth1=dfs(root,x,0);
+        int depth2=dfs(root,y,0);
+        if(depth1==depth2){
+           TreeNode  parent1=getParent(root,x);
+            TreeNode parent2=getParent(root,y);
+            if(parent1!=parent2){
+                return true;
+            }
+        }
+        return false;
+    }
+}
+**************************1ms***************************************
+class Solution {
+     Map<Integer, Integer> depth;
+    Map<Integer, TreeNode> parent;
+
+    public boolean isCousins(TreeNode root, int x, int y) {
+        depth = new HashMap();
+        parent = new HashMap();
+        dfs(root, null);
+        return (depth.get(x) == depth.get(y) && parent.get(x) != parent.get(y));
+    }
+
+    public void dfs(TreeNode node, TreeNode par) {
+        if (node != null) {
+            depth.put(node.val, par != null ? 1 + depth.get(par.val) : 0);
+            parent.put(node.val, par);
+            dfs(node.left, node);
+            dfs(node.right, node);
+        }
+    }
+}
+*******************************0ms *********************************
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+   int xDepth=0;;
+    int yDepth=0;;
+    boolean cousins = true;
+    public  boolean isCousins(TreeNode root, int x, int y) {
+      TreeNode currentNode = root;
+      depth(currentNode, x, y, 0);
+      
+      traverse(root, x, y);
+      // System.out.println("xDepth "+xDepth);
+      // System.out.println("yDepth "+yDepth);
+      // System.out.println("cousins "+cousins);
+      return xDepth==yDepth && cousins;
+    }
+  
+  private  void traverse(TreeNode root, int x, int y){
+    if(root==null){
+      return; 
+    }
+    // System.out.println("root.val "+root.val);
+    //  System.out.println("root.left "+(root.left!=null?root.left.val:""));
+    //  System.out.println("root.right "+(root.right!=null?root.right.val:""));
+    if(root.left!=null && root.right!=null && (root.left.val==x && root.right.val==y || root.left.val==y && root.right.val==x)){
+       // System.out.println("root.left.val "+root.left.val);
+       // System.out.println("root.right.val "+root.right.val);
+       cousins = false;
+    }
+    traverse(root.left, x,y);
+    traverse(root.right, x,y);
+  }
+   
+  private  int depth(TreeNode root, int x, int y, int depth){
+    if(root==null){
+      return depth;
+    }
+    if(root.val == x){
+      xDepth = depth; 
+    }
+    
+    if(root.val == y){
+      yDepth = depth; 
+    }
+    depth(root.left, x, y, depth+1);
+    depth(root.right, x, y, depth+1);
+    
+    return depth;
+  }
+}
