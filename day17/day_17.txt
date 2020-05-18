@@ -1,0 +1,112 @@
+*****************************Problem********************************
+Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
+
+Strings consists of lowercase English letters only and the length of both strings s and p will not be larger than 20,100.
+
+The order of output does not matter.
+
+Example 1:
+
+Input:
+s: "cbaebabacd" p: "abc"
+
+Output:
+[0, 6]
+
+Explanation:
+The substring with start index = 0 is "cba", which is an anagram of "abc".
+The substring with start index = 6 is "bac", which is an anagram of "abc".
+Example 2:
+
+Input:
+s: "abab" p: "ab"
+
+Output:
+[0, 1, 2]
+
+Explanation:
+The substring with start index = 0 is "ab", which is an anagram of "ab".
+The substring with start index = 1 is "ba", which is an anagram of "ab".
+The substring with start index = 2 is "ab", which is an anagram of "ab".
+
+*************************My Solution 16ms***************************
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> indexes = new ArrayList<>();
+        if(s==null|| s.length()==0|| p.length()>s.length())
+        return indexes;
+        else{
+            int[] charCounts = new int[26];
+            for(char ch:p.toCharArray()) charCounts[ch-'a']++;
+            int left = 0;
+            int right =0;
+            int count = p.length();
+            while(right<s.length()){
+                if(charCounts[s.charAt(right++)-'a']-- >=1){
+                    count--;
+                }
+                if(count==0){
+                    indexes.add(left);
+                }
+                if(right-left == p.length() && charCounts[s.charAt(left++)-'a']++>=0){
+                    count++;
+                }
+            }
+            return indexes;
+        }
+    }
+}
+***********************6 ms*****************************************
+class Solution {
+    //https://www.youtube.com/watch?v=86fQQ7rVGxA
+    public List<Integer> findAnagrams(String s, String p) {
+        int[]ss = new int[26];
+        int[]pp = new int[26];
+        
+        for (char c: p.toCharArray())
+            pp[c-'a']++;
+        int n=p.length();
+        List<Integer>res = new ArrayList<>();
+        
+        for (int i=0; i<s.length(); i++){
+            char c=s.charAt(i);
+            if (i>=n){
+                ss[s.charAt(i-n)-'a']--;
+            }
+            ss[c-'a']++;
+            if (Arrays.equals(ss,pp))
+                res.add(i-n+1);
+        }
+        
+        return res;
+    }
+}
+****************1666 ms ********************************************
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> list = new ArrayList<>();
+        if(s.isEmpty() || p.isEmpty() || s.length() < p.length())
+            return list;
+        
+        char[] parr = p.toCharArray();
+        Arrays.sort(parr);
+        
+        for(int i=0;i<s.length()-parr.length+1;i++) {
+            String t = s.substring(i,i+parr.length);
+            if(isAnagram(parr,t)) {
+                list.add(i);
+            }
+        }
+        return list;
+    }
+    
+    private boolean isAnagram(char[] parr, String t) {
+        char[] tt = t.toCharArray();
+        Arrays.sort(tt);
+        
+        if(Arrays.equals(parr,tt))
+            return true;
+        else
+            return false;
+    }
+}
