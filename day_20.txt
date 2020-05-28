@@ -1,0 +1,82 @@
+********************My GodDamn level recursive solution 9ms*********
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    Map<Integer,Integer> mem = new HashMap<>();
+    public int kthSmallest(TreeNode root, int k) {
+        System.out.println(k);
+        if(findSize(root.left)+1==k) {
+            return root.val;
+        }   
+        else if(findSize(root.left)+1>k) return kthSmallest(root.left,k);
+        else return kthSmallest(root.right,k-(findSize(root.left)+1));
+    }
+    public int findSize(TreeNode root){
+        if(root==null) return 0;
+        if(mem.containsKey(root.val)) return mem.get(root.val);
+        mem.put(root.val,root==null?0:1+findSize(root.left)+findSize(root.right));
+        return mem.get(root.val); 
+    }
+}
+**Easy Solution i.e. traverse in order and print n-1th element******
+t-O(N)
+class Solution {
+  public ArrayList<Integer> inorder(TreeNode root, ArrayList<Integer> arr) {
+    if (root == null) return arr;
+    inorder(root.left, arr);
+    arr.add(root.val);
+    inorder(root.right, arr);
+    return arr;
+  }
+
+  public int kthSmallest(TreeNode root, int k) {
+    ArrayList<Integer> nums = inorder(root, new ArrayList<Integer>());
+    return nums.get(k - 1);
+  }
+}
+with smaall optimization, we need list till k only
+class Solution {
+    List<Integer> list = new ArrayList<>();
+    public int kthSmallest(TreeNode root, int k) {
+       traverse(root, k);
+       return list.get(k-1); 
+    }
+    
+    private void traverse(TreeNode root, int k) {
+        if(root == null || list.size() == k) return;
+        traverse(root.left, k);
+        list.add(root.val);
+        traverse(root.right, k);
+        
+    }
+}
+***************iterative version of same****************************
+t=(O(H+K))
+class Solution {
+  public int kthSmallest(TreeNode root, int k) {
+    LinkedList<TreeNode> stack = new LinkedList<TreeNode>();
+
+    while (true) {
+      while (root != null) {
+        stack.add(root);
+        root = root.left;
+      }
+      root = stack.removeLast();
+      if (--k == 0) return root.val;
+      root = root.right;
+    }
+  }
+}
